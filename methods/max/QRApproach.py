@@ -2,9 +2,13 @@
 
 from matrix_tool import MathHelper as m
 
-print m.ones(5,2)
+a = [[1,0,2]]
+b = [[2,3,5],[7,8,9]]
 
-print m.ones(2,8)
+res =  m.transpose(b)
 
-print m.multiply(m.ones(5,2),[[4,3,2,4,5],[4,3,2,4,5]])
+# print m.norm(a[0])
+print m.get_householder_reflection_matrix(m.transpose(a),len(a[0]))
+
+
 
