@@ -1,15 +1,17 @@
 from __future__ import print_function
 
 
-def solve(A, b):
+def solve(A, b, forward_pass=True):
   S = append_column(A, b)
-  for i in xrange(len(S)):
-    forward(S, i)
+  if forward_pass:
+    for i in xrange(len(S)):
+      forward(S, i)
   roots = []
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(backward(S, i))
   roots.reverse()
   print("Roots: {}".format(roots))
+  return roots
 
 
 def forward(matrix, row):
@@ -29,9 +31,9 @@ def forward(matrix, row):
 
 def backward(matrix, row):
   m = len(matrix[row])
-  res = matrix[row][m-1]
+  res = matrix[row][m-1] / matrix[row][row]
   for i in xrange(row-1, -1, -1):
-    ai = matrix[i][row]
+    ai = matrix[i][row] / matrix[row][row]
     for j in xrange(row, m):
       matrix[i][j] -= ai * matrix[row][j]
   print("Backward for row #{}".format(row))
