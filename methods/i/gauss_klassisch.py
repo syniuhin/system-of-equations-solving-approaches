@@ -1,5 +1,5 @@
 from __future__ import print_function
-
+from check import check
 
 def solve(A, b, forward_pass=True):
   S = append_column(A, b)
@@ -19,7 +19,7 @@ def forward(matrix, row):
   n = len(matrix)
   m = len(matrix[row])
   for j in xrange(row, m):
-    matrix[row][j] /= a
+    matrix[row][j] /= 1. * a
   for i in xrange(row + 1, n):
     ai = matrix[i][row]
     for j in xrange(row, m):
@@ -82,4 +82,5 @@ b = [
   [-15],
 ]
 
-solve(A, b)
+x = solve(A, b)
+check(A, x, b)
