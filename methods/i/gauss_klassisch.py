@@ -1,5 +1,7 @@
 from __future__ import print_function
 from check import check
+from squared import ones
+
 
 def solve(A, b):
   S = append_column(A, b)
@@ -12,7 +14,7 @@ def solve(A, b):
   return roots
 
 
-def forward(A, row):
+def forward(A, row, verbose=True):
   a = A[row][row]
   n = len(A)
   m = len(A[row])
@@ -22,15 +24,16 @@ def forward(A, row):
     ai = A[i][row]
     for j in xrange(row, m):
       A[i][j] -= ai * A[row][j]
-  print("Forward for row #{}".format(row))
-  print_matrix(A)
-  print()
+  if verbose:
+    print("Forward for row #{}".format(row))
+    print_matrix(A)
+    print()
 
 
 def backward_right(A, row):
   m = len(A[row])
-  res = A[row][m-1] * 1. / A[row][row]
-  for i in xrange(row-1, -1, -1):
+  res = A[row][m - 1] * 1. / A[row][row]
+  for i in xrange(row - 1, -1, -1):
     ai = A[i][row] * 1. / A[row][row]
     for j in xrange(row, m):
       A[i][j] -= ai * A[row][j]
@@ -43,12 +46,12 @@ def backward_right(A, row):
 def backward_left(A, row):
   n = len(A)
   m = len(A[row])
-  res = A[row][m-1] * 1. / A[row][row]
-  for i in xrange(row+1, n):
+  res = A[row][m - 1] * 1. / A[row][row]
+  for i in xrange(row + 1, n):
     ai = A[i][row] * 1. / A[row][row]
-    for j in xrange(row+1):
+    for j in xrange(row + 1):
       A[i][j] -= ai * A[row][j]
-    A[i][m-1] -= ai * A[row][m-1]
+    A[i][m - 1] -= ai * A[row][m - 1]
   print("Backward for row #{}".format(row))
   print_matrix(A)
   print()
@@ -80,19 +83,50 @@ def determinant(A):
   return det
 
 
+def inverse(A):
+  n = len(A)
+  m = len(A[0])
+  I = ones(n)
+  AE = append_column(A, I)
+  for row in xrange(n):
+    forward(AE, row, verbose=False)
+  print("Forward pass:")
+  print_matrix(AE)
+  print()
+  # 'Inverse' forward
+  for row in xrange(n - 1, -1, -1):
+    for i in xrange(row - 1, -1, -1):
+      ai = AE[i][row] * 1. / AE[row][row]
+      for j in xrange(row, len(AE[row])):
+        AE[i][j] -= ai * AE[row][j]
+  print("Backward pass:")
+  print_matrix(AE)
+  print()
+  E = []
+  for i in xrange(n):
+    E.append(AE[i][n:])
+  return E
+
+
 def print_matrix(A):
   for row in A:
     for elem in row:
-      print("{:.1f}\t".format(elem), end="")
+      print("{: 7.2f} ".format(elem), end="")
+    print()
+
+
+def print_matrix_precise(A):
+  for row in A:
+    for elem in row:
+      print("{:9.6f}\t".format(elem), end="")
     print()
 
 
 def append_column(A, x):
   S = []
   for i in xrange(len(A)):
-    S.append([])
-    S[i] = A[i][:]
-    S[i].append(x[i][0])
+    S.append(A[i][:])
+    [S[i].append(xj) for xj in x[i]]
   return S
 
 
@@ -102,4 +136,9 @@ def main():
   print("Roots: {}".format(x))
   check(A1, x, b1)
   det = determinant(A1)
+  print()
   print("Determinant: {}".format(det))
+  print()
+  inversed = inverse(A1)
+  print("Inverse matrix:")
+  print_matrix_precise(inversed)
