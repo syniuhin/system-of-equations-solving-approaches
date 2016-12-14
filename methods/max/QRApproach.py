@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # this is QR decomposition approach with using Householder reflection
 
-from methods.i.gauss_klassisch import backward
+from methods.i.gauss_klassisch import backward_right
 from methods.matrix_tool import MathHelper as m
 
 A = [
@@ -30,6 +32,31 @@ b = [
 ]
 
 
+#Немного теории по поводу нахождения детерминанта
+#Так как Q - ортогональная, а R - верхняя треугольная, то детерминант матрицы А - произведение детерминантов матриц Q *  R
+#соответсвенно, где det Q = (-1)^k, k - число рефлексий Хаусхолдера, det R равен произведению элементов диагонали матрицы (треугольная)
+#
+#
+#Информация, касающаяся поиска обратной матрицы
+# inv(A) = inv(R) * inv(Q) = inv(R) * Q' (транспонированая)
+
+def get_determinant(k,R):
+    detR = 1
+    for i in xrange(len(R)):
+        detR *= R[i][i]
+    return (-1)**k * detR
+
+def get_invariant(Q,R):
+    detR = 1
+    for i in xrange(len(R)):
+        detR *= R[i][i]
+    print detR
+    invR = m.divide_by_scalar(R,detR)
+    print invR
+    invQ = m.transpose(Q)
+    return m.multiply(invR,invQ)
+
+
 
 n = len(A)
 Q = m.eye(n)
@@ -40,7 +67,6 @@ params_matrix_list = [R]
 for i in xrange(n-1):
     col = m.transpose([m.get_column(R, i)[i:]])
     h_i = m.get_householder_reflection_matrix(col)
-    print len(h_i)
     if (i != 0):
         for j in xrange(i):
             h_i = m.extend_householder_matrix(h_i)
@@ -48,8 +74,6 @@ for i in xrange(n-1):
     R = m.multiply(h_i, params_matrix_list[0])
     householders_reflections.append(h_i)
     params_matrix_list.insert(0, R)
-    print
-    print
 #
 for i in householders_reflections:
     Q = m.multiply(Q, i)
@@ -58,11 +82,15 @@ R = m.get_triangle_matrix(R)
 y = m.multiply(m.transpose(Q), b)
 y = m.transpose(y)
 
+C = []
 for i in xrange(len(R)):
-    R[i].append(y[0][i])
+    C.append(R[i]+[y[0][i]])
 
-roots = [backward(R, i) for i in xrange(len(R) - 1, -1, -1)]
+
+roots = [backward_right(C, i) for i in xrange(len(C) - 1, -1, -1)]
 roots.reverse()
 
-
 print m.multiply(A, m.transpose([roots]))
+print "\ndetA = detQ * detR = " + str(get_determinant(len(householders_reflections),R))
+print "\ninv(A) = inv(R) * inv(Q) = inv(R) * Q' (транспонированая) = "
+m.show_matrix(get_invariant(Q,R))

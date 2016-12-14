@@ -34,7 +34,10 @@ class MathHelper:
             return [[item*scalar for item in row] for row in matrix]
     @staticmethod
     def divide_by_scalar(matrix, scalar):
-        return [item * 1. / scalar for item in matrix]
+        if (len(matrix)==1):
+            return [[item * 1. / scalar  for item in matrix[0]]]
+        else:
+            return [[item * 1. / scalar for item in row] for row in matrix]
 
     @staticmethod
     def get_row(matrix, index):
@@ -121,3 +124,8 @@ class MathHelper:
             for j in xrange(i):
                 matrix[i][j] = 0
         return matrix
+
+    @staticmethod
+    def show_matrix(A):
+        for row in A:
+            print row
