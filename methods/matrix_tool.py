@@ -99,9 +99,27 @@ class MathHelper:
     @staticmethod
     def get_householder_reflection_matrix(column,n):
         a = MathHelper.transpose(column)
-        I = MathHelper.ones(n,n)
         H = MathHelper.multiply(MathHelper.transpose(a),a)
-        norm_square = MathHelper.norm(MathHelper.get_householder_reflection_vector(a)[0]) ** 2
-        H = MathHelper.product_with_scalar(H, 2.0/ norm_square)
-        H = MathHelper.get_matrix_difference(I,H)
+        param = 2.0/(MathHelper.norm(MathHelper.get_householder_reflection_vector(a)[0]) ** 2)
+        u = [MathHelper.get_householder_reflection_vector(a)[0]]
+        w = MathHelper.multiply(MathHelper.transpose(u),u)
+        w = MathHelper.product_with_scalar(w, param)
+        H = MathHelper.get_matrix_difference(MathHelper.eye(n),w)
         return H
+
+    @staticmethod
+    def extend_householder_matrix(matrix):
+        n = len(matrix)
+        first_row = [0 for _ in xrange(n+1)]
+        first_row[0] = 1
+        for i in matrix:
+            i.insert(0,0)
+        matrix.insert(0,first_row)
+        return matrix
+
+    @staticmethod
+    def get_triangle_matrix(matrix):
+        for i in xrange(len(matrix)):
+            for j in xrange(i):
+                matrix[i][j] = 0
+        return matrix

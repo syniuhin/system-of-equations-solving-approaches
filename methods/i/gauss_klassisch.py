@@ -85,3 +85,5 @@ def main():
 
   x = solve(A, b)
   check(A, x, b)
+
+main()
