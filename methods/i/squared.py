@@ -3,8 +3,16 @@ from math import sqrt
 import gauss_klassisch as gk
 from check import check
 
+
 def zeros(n, m):
   return [[0.] * m for _ in xrange(n)]
+
+
+def ones(n):
+  res = zeros(n, n)
+  for i in xrange(len(res)):
+    res[i][i] = 1
+  return res
 
 
 def getU(A):
@@ -47,37 +55,20 @@ def mul(A, B):
   return C
 
 
-A = [
-    [188, -32, -9, 7, -61, 49, -53, 23, -31, 62],
-    [-32, 101, 11, -32, -80, 1, 53, -7, 94, -109],
-    [-9, 11, 231, 96, -62, -12, 72, -40, 72, -77],
-    [7, -32, 96, 174, -37, -119, 19, 7, -27, 27],
-    [-61, -80, -62, -37, 184, -34, -115, 45, -53, 46],
-    [49, 1, -12, -119, -34, 182, 80, -56, -4, 18],
-    [-53, 53, 72, 19, -115, 80, 231, -101, 70, -50],
-    [23, -7, -40, 7, 45, -56, -101, 227, -10, 23],
-    [-31, 94, 72, -27, -53, -4, 70, -10, 241, -155],
-    [62, -109, -77, 27, 46, 18, -50, 23, -155, 212],
-]
+def main():
+  from constants import A2, b2
+  n = len(A2)
+  U = getU(A2)
+  gk.print_matrix(U)
+  Ut = transpose(U)
 
-b = [
-    [-44],
-    [74],
-    [87],
-    [247],
-    [-39],
-    [168],
-    [192],
-    [-199],
-    [-194],
-    [243],
-]
-
-U = getU(A)
-gk.print_matrix(U)
-Ut = transpose(U)
-
-y = gk.solve(Ut, b)
-x = gk.solve(U, [[e] for e in y], forward_pass=False)
-
-check(A, x, b)
+  y = []
+  Utb = gk.append_column(Ut, b2)
+  for row in xrange(n):
+   y.append(gk.backward_left(Utb, row))
+  Uy = gk.append_column(U, [[e] for e in y])
+  x = []
+  for row in xrange(n-1, -1, -1):
+    x.append(gk.backward_right(Uy, row))
+  x.reverse()
+  check(A2, x, b2)
