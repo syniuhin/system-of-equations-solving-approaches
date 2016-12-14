@@ -47,13 +47,12 @@ class MathHelper:
     @staticmethod
     def multiply(A, B):
 
-        #Product condition is wrong
+        # #Product condition is wrong
         if len(A[0]) != len(B):
             raise Exception
 
         #TODO: B vector has one column case
         rows, cols = len(B), len(B[0])
-
         resRows = xrange(len(A))
         rMatrix = [[0] * cols for _ in resRows]
         for idx in resRows:
@@ -97,14 +96,13 @@ class MathHelper:
         return A
 
     @staticmethod
-    def get_householder_reflection_matrix(column,n):
+    def get_householder_reflection_matrix(column):
         a = MathHelper.transpose(column)
-        H = MathHelper.multiply(MathHelper.transpose(a),a)
         param = 2.0/(MathHelper.norm(MathHelper.get_householder_reflection_vector(a)[0]) ** 2)
         u = [MathHelper.get_householder_reflection_vector(a)[0]]
         w = MathHelper.multiply(MathHelper.transpose(u),u)
         w = MathHelper.product_with_scalar(w, param)
-        H = MathHelper.get_matrix_difference(MathHelper.eye(n),w)
+        H = MathHelper.get_matrix_difference(MathHelper.eye(len(column)),w)
         return H
 
     @staticmethod
