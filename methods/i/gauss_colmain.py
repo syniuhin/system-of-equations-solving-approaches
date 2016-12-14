@@ -13,7 +13,6 @@ def solve(A, b):
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(gk.backward_right(S, i))
   roots.reverse()
-  print("Roots: {}".format(roots))
   return roots
 
 
@@ -38,4 +37,7 @@ def choose_main(A, row):
 def main():
   from constants import A2, b2
   x = solve(A2, b2)
+  print("Roots: {}".format(x))
   check(A2, x, b2)
+  det = gk.determinant(A2)
+  print("Determinant: {}".format(det))

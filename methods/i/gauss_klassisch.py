@@ -9,7 +9,6 @@ def solve(A, b):
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(backward_right(S, i))
   roots.reverse()
-  print("Roots: {}".format(roots))
   return roots
 
 
@@ -56,6 +55,31 @@ def backward_left(A, row):
   return res
 
 
+def triangalize(A0):
+  n = len(A0)
+  m = len(A0[0])
+  A = []
+  for row in xrange(n):
+    A.append(A0[row][:])
+  for row in xrange(n):
+    a0 = A[row][row]
+    for i in xrange(row + 1, n):
+      ai = A[i][row]
+      for j in xrange(row, m):
+        A[i][j] -= ai * A[row][j] / a0
+  return A
+
+
+def determinant(A):
+  tr = triangalize(A)
+  print("Triangalized matrix:")
+  print_matrix(tr)
+  det = 1.
+  for i in xrange(len(tr)):
+    det *= tr[i][i]
+  return det
+
+
 def print_matrix(A):
   for row in A:
     for elem in row:
@@ -75,4 +99,7 @@ def append_column(A, x):
 def main():
   from constants import A1, b1
   x = solve(A1, b1)
+  print("Roots: {}".format(x))
   check(A1, x, b1)
+  det = determinant(A1)
+  print("Determinant: {}".format(det))
