@@ -4,6 +4,51 @@ import gauss_klassisch as gk
 from check import check
 
 
+def solve(A, b):
+  n = len(A)
+  U = getU(A)
+  gk.print_matrix(U)
+  Ut = transpose(U)
+
+  y = []
+  Utb = gk.append_column(Ut, b)
+  for row in xrange(n):
+    y.append(gk.backward_left(Utb, row))
+  Uy = gk.append_column(U, [[e] for e in y])
+  x = []
+  for row in xrange(n - 1, -1, -1):
+    x.append(gk.backward_right(Uy, row))
+  x.reverse()
+  return x, U
+
+
+# Ut * U = A => det(U)^2 = det(A)
+def determinant(U):
+  det = 1.
+  for i in xrange(len(U)):
+    det *= U[i][i]
+  return det**2
+
+
+def inverse(A, U):
+  # T = U^-1
+  n = len(U)
+  T = zeros(n, n)
+  for i in xrange(n):
+    T[i][i] = 1. / U[i][i]
+    for j in xrange(i+1, n):
+      for k in xrange(j):
+        T[i][j] -= T[i][k] * U[k][j]
+      T[i][j] /= U[j][j]
+
+  B = zeros(n, n)
+  for i in xrange(n):
+    for j in xrange(n):
+      for k in xrange(min(i, j), n):
+        B[i][j] += T[i][k] * T[j][k]
+  return B
+
+
 def zeros(n, m):
   return [[0.] * m for _ in xrange(n)]
 
@@ -57,18 +102,12 @@ def mul(A, B):
 
 def main():
   from constants import A2, b2
-  n = len(A2)
-  U = getU(A2)
-  gk.print_matrix(U)
-  Ut = transpose(U)
-
-  y = []
-  Utb = gk.append_column(Ut, b2)
-  for row in xrange(n):
-   y.append(gk.backward_left(Utb, row))
-  Uy = gk.append_column(U, [[e] for e in y])
-  x = []
-  for row in xrange(n-1, -1, -1):
-    x.append(gk.backward_right(Uy, row))
-  x.reverse()
+  x, U = solve(A2, b2)
   check(A2, x, b2)
+  det = determinant(U)
+  print()
+  print("Determinant: {}".format(det))
+  print()
+  inversed = inverse(A2, U)
+  print("Inverse matrix:")
+  gk.print_matrix_precise(inversed)
