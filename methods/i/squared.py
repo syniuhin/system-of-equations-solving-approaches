@@ -14,6 +14,7 @@ def solve(A, b):
   Utb = gk.append_column(Ut, b)
   for row in xrange(n):
     y.append(gk.backward_left(Utb, row))
+  print(y)
   Uy = gk.append_column(U, [[e] for e in y])
   x = []
   for row in xrange(n - 1, -1, -1):
@@ -103,6 +104,7 @@ def mul(A, B):
 def main():
   from constants import A2, b2
   x, U = solve(A2, b2)
+  print("Roots: {}".format(x))
   check(A2, x, b2)
   det = determinant(U)
   print()
