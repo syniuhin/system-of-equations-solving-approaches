@@ -29,13 +29,11 @@ def solve(A, y):
         sigma, lamb = -d / (c + b * sigma), (y[i][0] - b * lamb) / (c + b * sigma)
         coeff.append((sigma, lamb))
 
-    xn = lamb
-    roots = [xn]
+    roots = [lamb]
 
     for i in xrange(n - 2, -1, -1):
         sigma, lamb = coeff[i]
-        xn = sigma * xn + lamb
-        roots.insert(0, xn)
+        roots.insert(0, sigma * roots[0] + lamb)
 
     return roots, det
 
