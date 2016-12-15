@@ -126,6 +126,13 @@ class MathHelper:
         return matrix
 
     @staticmethod
+    def get_low_triangle_matrix(matrix):
+        for i in xrange(len(matrix)):
+            for j in xrange(i):
+                matrix[-i-1][-j-1] = 0
+        return matrix
+
+    @staticmethod
     def show_matrix(A):
         for row in A:
             print row

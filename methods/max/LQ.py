@@ -30,11 +30,11 @@ b = [
     [-194],
     [243],
 ]
-
-A = [[1, 2, 3],
-     [0, 3, 2],
-     [2, 0, 1]]
-b = [[6],[7],[8]]
+#
+# A = [[1, 2, 3],
+#      [0, 3, 2],
+#      [2, 0, 1]]
+# b = [[6],[7],[8]]
 
 
 #Немного теории по поводу нахождения детерминанта
@@ -45,51 +45,41 @@ b = [[6],[7],[8]]
 #Информация, касающаяся поиска обратной матрицы
 # inv(A) = inv(R) * inv(Q) = inv(R) * Q' (транспонированая)
 
-def get_determinant(k,R):
-    detR = 1
-    for i in xrange(len(R)):
-        detR *= R[i][i]
-    return (-1)**k * detR
-
-def get_invariant(Q,R):
-    detR = 1
-    for i in xrange(len(R)):
-        detR *= R[i][i]
-    invR = m.divide_by_scalar(R,detR)
-    invQ = m.transpose(Q)
-    return m.multiply(invR,invQ)
+# def get_determinant(k,R):
+#     detR = 1
+#     for i in xrange(len(R)):
+#         detR *= R[i][i]
+#     return (-1)**k * detR
+#
+# def get_invariant(Q,R):
+#     detR = 1
+#     for i in xrange(len(R)):
+#         detR *= R[i][i]
+#     invR = m.divide_by_scalar(R,detR)
+#     invQ = m.transpose(Q)
+#     return m.multiply(invR,invQ)
 
 n = len(A)
 Q = m.eye(n)
-R = A
+L = m.multiply(Q,A)
+
 householders_reflections = []
-params_matrix_list = [R]
+params_matrix_list = [L]
 
 for i in xrange(n-1):
-    col = m.transpose([m.get_column(R, i)[i:]])
+    col = m.transpose([m.get_row(L, i)[i:]])
     H = m.get_householder_reflection_matrix(col)
     if (i != 0):
         for j in xrange(i):
             H = m.extend_householder_matrix(H)
-    R = m.multiply(H, R)
-    Q = m.multiply(Q, H)
+    L = m.multiply(L, H)
+    Q = m.multiply(H, Q)
     householders_reflections.append(H)
-    params_matrix_list.append(R)
+    params_matrix_list.append(L)
 
-R = m.get_triangle_matrix(R)
-y = m.multiply(m.transpose(Q), b)
-y = m.transpose(y)
+print m.show_matrix(m.multiply(L, Q))
 
-print y
-C = []
-for i in xrange(len(R)):
-    C.append(R[i]+[y[0][i]])
 
-roots = [backward_right(C, i) for i in xrange(len(C) - 1, -1, -1)]
-roots.reverse()
-
-print roots
-print m.multiply(A, m.transpose([roots]))
 # print "\ndetA = detQ * detR = " + str(get_determinant(len(householders_reflections),R))
 # print "\ninv(A) = inv(R) * inv(Q) = inv(R) * Q' (транспонированая) = "
 # m.show_matrix(get_invariant(Q,R))

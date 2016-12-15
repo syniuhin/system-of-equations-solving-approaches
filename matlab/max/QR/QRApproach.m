@@ -27,7 +27,7 @@ for i = 1:1:(n-1)
       Q = Q * H;
       ind = ind + 1;
 end;
-
+disp(R);
 y = Q' * R;
 disp(y);
 
