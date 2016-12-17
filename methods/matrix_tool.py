@@ -103,8 +103,7 @@ class MathHelper:
         a = MathHelper.transpose(column)
         param = 2.0/(MathHelper.norm(MathHelper.get_householder_reflection_vector(a)[0]) ** 2)
         u = [MathHelper.get_householder_reflection_vector(a)[0]]
-        w = MathHelper.multiply(MathHelper.transpose(u),u)
-        w = MathHelper.product_with_scalar(w, param)
+        w = MathHelper.product_with_scalar(MathHelper.multiply(MathHelper.transpose(u),u), param)
         H = MathHelper.get_matrix_difference(MathHelper.eye(len(column)),w)
         return H
 
@@ -119,20 +118,6 @@ class MathHelper:
         return matrix
 
     @staticmethod
-    def get_triangle_matrix(matrix):
-        for i in xrange(len(matrix)):
-            for j in xrange(i):
-                matrix[i][j] = 0
-        return matrix
-
-    @staticmethod
-    def get_low_triangle_matrix(matrix):
-        for i in xrange(len(matrix)):
-            for j in xrange(i):
-                matrix[-i-1][-j-1] = 0
-        return matrix
-
-    @staticmethod
-    def show_matrix(A):
+    def show_matrix(A, to_round):
         for row in A:
-            print row
+            print [round((i)) for i in row] if to_round else row
