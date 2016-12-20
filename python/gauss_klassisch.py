@@ -1,12 +1,14 @@
 from __future__ import print_function
-from check import check
-from squared import ones
+import time
+
+from matrix_tool import print_matrix, print_vector, eye, append_column, multiply
+from check import check_roots
 
 
 def solve(A, b):
   S = append_column(A, b)
   for i in xrange(len(S)):
-    forward(S, i)
+    forward(S, i, verbose=False)
   roots = []
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(backward_right(S, i))
@@ -86,7 +88,7 @@ def determinant(A):
 def inverse(A):
   n = len(A)
   m = len(A[0])
-  I = ones(n)
+  I = eye(n)
   AE = append_column(A, I)
   for row in xrange(n):
     forward(AE, row, verbose=False)
@@ -108,37 +110,32 @@ def inverse(A):
   return E
 
 
-def print_matrix(A):
-  for row in A:
-    for elem in row:
-      print("{: 7.2f} ".format(elem), end="")
-    print()
-
-
-def print_matrix_precise(A):
-  for row in A:
-    for elem in row:
-      print("{:9.6f}\t".format(elem), end="")
-    print()
-
-
-def append_column(A, x):
-  S = []
-  for i in xrange(len(A)):
-    S.append(A[i][:])
-    [S[i].append(xj) for xj in x[i]]
-  return S
-
-
 def main():
-  from constants import A1, b1
-  x = solve(A1, b1)
-  print("Roots: {}".format(x))
-  check(A1, x, b1)
-  det = determinant(A1)
+  from constants import A1_21 as A, b1_21 as b
+  start_time = time.time()
+  x = solve(A, b)
+  solve_time = time.time()
+  print("Roots:")
+  print_vector(x)
+  check_roots(A, x, b)
+  det = determinant(A)
+  det_time = time.time()
   print()
   print("Determinant: {}".format(det))
   print()
-  inversed = inverse(A1)
+  inversed = inverse(A)
+  inverse_time = time.time()
   print("Inverse matrix:")
-  print_matrix_precise(inversed)
+  print_matrix(inversed, precision=8)
+  print("Check inverse matrix:")
+  print_matrix(multiply(inversed, A))
+
+  print("Time elapsed: ")
+  print(
+      "\tSolution:\t{} ms\n\tDeterminant:\t{} ms\n\tInversion:\t{} ms\n\tOverall:\t{} ms".
+      format((solve_time - start_time) * 1000, (det_time - solve_time) * 1000, (
+          inverse_time - det_time) * 1000, (inverse_time - start_time) * 1000))
+
+
+if __name__ == '__main__':
+  main()
