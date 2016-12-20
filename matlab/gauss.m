@@ -33,7 +33,8 @@ end;
 
 S = [A1 b1];
 S = forward(S);
-[, x] = backward_left(S);
+[B, x] = backward_right(S);
+B
 x
 
 T = triangalize(A1);
