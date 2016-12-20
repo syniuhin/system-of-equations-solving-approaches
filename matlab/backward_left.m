@@ -9,4 +9,4 @@ function [B, x] = backward_left(A)
       B(i, :) = B(i, :) - B(row, :) * B(i, row) / B(row, row);
     end;
   end;
-end;
+end

@@ -57,5 +57,21 @@ end;
 disp(L);
 
 
+C = [L,B];
+disp(C);
+[r,Y] = backward_left(C);
+X = Q' * Y';
+
+disp(X);
+
+%determinant
+disp('The determinant of A matrix equals');
+disp((-1)^ind*prod(diag(L)));
+
+%inv
+disp('The invariant matrix for A is below:');
+disp(L\Q');
+
+
 
 

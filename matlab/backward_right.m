@@ -1,4 +1,4 @@
-function [B, x] = backward_right(A)
+function [B,x] = backward_right(A)
   n = size(A, 1);
   m = size(A, 2);
   x = [];
@@ -9,4 +9,4 @@ function [B, x] = backward_right(A)
       B(i, :) = B(i, :) - B(row, :) * B(i, row) / B(row, row);
     end;
   end;
-end;
+end
