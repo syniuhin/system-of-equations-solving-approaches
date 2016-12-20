@@ -9,7 +9,7 @@ extend_householder_matrix, get_householder_reflection_matrix, \
 print_matrix, print_vector, append_column
 from check import check_roots
 
-from gauss_klassisch import backward_right
+from gauss_klassisch import forward, backward_right
 from cholesky import inverse_triangle_right
 
 
@@ -36,6 +36,9 @@ def decompose(A):
       for j in xrange(i):
         H = extend_householder_matrix(H)
     R = multiply(H, R)
+    print("Iteration #{}".format(i + 1))
+    print_matrix(R)
+    print
     Q = multiply(Q, H)
     householders_reflections.append(H)
     params_matrix_list.append(R)
@@ -63,10 +66,26 @@ def inverse(Q, R):
   return multiply(invR, invQ)
 
 
+def check_feasibility(A):
+  print('Check if we can use QR on this matrix')
+  S = []
+  for row in A:
+    S.append(row[:])
+  for row in xrange(len(S)):
+    forward(S, row)
+    if S[row][row] == 0.:
+      print('!!!BUSTED!!!')
+      return False
+  return True
+
+
 def main():
   from constants import A1_21 as A, b1_21 as b
 
   start_time = time.time()
+  if not check_feasibility(A):
+    print("Matrix has rank of {}, good to go!".format(len(A)))
+  check_time = time.time()
   Q, R, hr = decompose(A)
   decomp_time = time.time()
   x = solve(Q, R, b)
@@ -89,7 +108,7 @@ def main():
   print("Time elapsed: ")
   print(
       "\tSolution:\t{} ms\n\tDeterminant:\t{} ms\n\tInversion:\t{} ms\n\tOverall:\t{} ms".
-      format((solve_time - start_time) * 1000, (det_time - solve_time) * 1000, (
+      format((solve_time - check_time) * 1000, (det_time - solve_time) * 1000, (
           inverse_time - det_time) * 1000, (inverse_time - start_time) * 1000))
 
 if __name__ == '__main__':

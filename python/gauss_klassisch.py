@@ -9,6 +9,10 @@ def solve(A, b):
   S = append_column(A, b)
   for i in xrange(len(S)):
     forward(S, i, verbose=False)
+    if S[i][i] == 0.:
+      print('!!!BUSTED!!!')
+      return None
+
   roots = []
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(backward_right(S, i))
@@ -114,6 +118,8 @@ def main():
   from constants import A1_21 as A, b1_21 as b
   start_time = time.time()
   x = solve(A, b)
+  if x is None:
+    return
   solve_time = time.time()
   print("Roots:")
   print_vector(x, precision=8)
