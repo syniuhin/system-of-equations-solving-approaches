@@ -31,13 +31,17 @@ function B = inverse(A)
   B = AE(:, n+1:2*n);
 end;
 
+tic
 S = [A1 b1];
 S = forward(S);
 [B, x] = backward_right(S);
 B
 x
+toc
 
 T = triangalize(A1);
 det = determinant(T)
+toc
 
 [Inv, ] = inverse(A1)
+toc

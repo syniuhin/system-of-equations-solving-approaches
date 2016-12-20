@@ -116,7 +116,7 @@ def main():
   x = solve(A, b)
   solve_time = time.time()
   print("Roots:")
-  print_vector(x)
+  print_vector(x, precision=8)
   check_roots(A, x, b)
   det = determinant(A)
   det_time = time.time()

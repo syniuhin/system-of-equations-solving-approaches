@@ -54,8 +54,11 @@ function [B, T] = inverse(A, U)
   end;
 end;
 
+tic
 U = factorize(A2)
 [_, y] = backward_left([U' b2])
 [_, x] = backward_right([U y'])
+toc
 det = determinant(U) ^ 2
 [B, T] = inverse(A2, U)
+toc
