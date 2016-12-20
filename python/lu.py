@@ -36,7 +36,7 @@ def lu(A):
 
 
 def main():
-  from constants import A2_21 as A, b2_21 as b
+  from constants import A3_21 as A, b3_21 as b
   start_time = time.time()
   x = solve(A, b)
   solve_time = time.time()

@@ -6,7 +6,7 @@ import time
 
 from matrix_tool import divide_by_scalar, transpose, multiply, eye, get_column,\
 extend_householder_matrix, get_householder_reflection_matrix, \
-print_matrix, print_vector
+print_matrix, print_vector, append_column
 from check import check_roots
 
 from gauss_klassisch import backward_right
@@ -15,11 +15,8 @@ from cholesky import inverse_triangle_right
 
 def solve(Q, R, b):
   y = multiply(transpose(Q), b)
-  y = transpose(y)
   print_matrix(R, round_elem=True)
-  C = []
-  for i in xrange(len(R)):
-    C.append(R[i] + [y[0][i]])
+  C = append_column(R, y)
 
   x = [backward_right(C, i) for i in xrange(len(C) - 1, -1, -1)]
   x.reverse()
@@ -67,7 +64,7 @@ def inverse(Q, R):
 
 
 def main():
-  from constants import A1_30 as A, B1_30 as b
+  from constants import A1_21 as A, b1_21 as b
 
   start_time = time.time()
   Q, R, hr = decompose(A)
@@ -75,7 +72,7 @@ def main():
   x = solve(Q, R, b)
   solve_time = time.time()
   print("Roots:")
-  print_vector(x)
+  print_vector(x, precision=8)
   check_roots(A, x, b)
   det = determinant(len(hr), R)
   det_time = time.time()
