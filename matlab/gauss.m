@@ -26,14 +26,19 @@ function B = inverse(A)
   n = size(A, 1);
   I = eye(n);
   AE = [A, I]
+  disp('Forward pass');
   AE = forward(AE)
+  disp('Backward pass');
   AE = backward_right(AE)
   B = AE(:, n+1:2*n);
 end;
 
 tic
 S = [A1 b1];
+disp('Forward pass');
 S = forward(S);
+toc
+disp('Backward pass');
 [B, x] = backward_right(S);
 B
 x
@@ -45,3 +50,6 @@ toc
 
 [Inv, ] = inverse(A1)
 toc
+
+disp('Check inverse matrix');
+Inv * A1

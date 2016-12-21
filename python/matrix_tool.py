@@ -78,12 +78,6 @@ def append_column(A, x):
   return S
 
 
-def get_householder_reflection_vector(vector):
-  res = [item for item in vector[0]]
-  res[0] = res[0] + norm(res) if (res[0] > 0) else res[0] - norm(res)
-  return [res]
-
-
 def get_matrix_sum(A, B):
   for i in xrange(len(A)):
     for j in xrange(len(A[0])):
@@ -96,25 +90,6 @@ def get_matrix_difference(A, B):
     for j in xrange(len(A[0])):
       A[i][j] = A[i][j] - B[i][j]
   return A
-
-
-def get_householder_reflection_matrix(column):
-  a = transpose(column)
-  param = 2.0 / (norm(get_householder_reflection_vector(a)[0])**2)
-  u = [get_householder_reflection_vector(a)[0]]
-  w = product_with_scalar(multiply(transpose(u), u), param)
-  H = get_matrix_difference(eye(len(column)), w)
-  return H
-
-
-def extend_householder_matrix(matrix):
-  n = len(matrix)
-  first_row = [0 for _ in xrange(n + 1)]
-  first_row[0] = 1
-  for i in matrix:
-    i.insert(0, 0)
-  matrix.insert(0, first_row)
-  return matrix
 
 
 def print_matrix(A, precision=2, plain=False, round_elem=False):

@@ -29,8 +29,8 @@ function [roots, det] = thomas(A, y)
 
     coeff = zeros(n, 2);
     det = 1;
-    sigma = 0;
-    lamb = 0;
+    alpha = 0;
+    beta = 0;
 
     for i = 1:n
     	if(i - 1 > 0)
@@ -47,21 +47,28 @@ function [roots, det] = thomas(A, y)
         	d = 0.;
         endif
 
-        det *= (c + b * sigma);
+        det *= (c + b * alpha);
 
-        tmp = -d / (c + b * sigma);
-        lamb = (y(i, 1) - b * lamb) / (c + b * sigma);
-        sigma = tmp;
+        if c + b * alpha == 0
+            disp('Correctness failed');
+        end;
+        tmp = -d / (c + b * alpha);
+        if abs(tmp) > 1
+            disp('UNSTABLE');
+        end;
+        beta = (y(i, 1) - b * beta) / (c + b * alpha);
+        alpha = tmp;
 
-        coeff(i, :) = [sigma, lamb];
+        coeff(i, :) = [alpha, beta];
     end;
 
-    roots = [lamb];
+    coeff
+    roots = [beta];
 
     for i = n - 1:-1:1
-        sigma = coeff(i, 1);
-    	lamb = coeff(i, 2);
-        roots = [sigma * roots(1) + lamb, roots];
+        alpha = coeff(i, 1);
+    	beta = coeff(i, 2);
+        roots = [alpha * roots(1) + beta, roots];
     end;
 end;
 

@@ -6,5 +6,6 @@ function B = forward(A)
     for i = row+1:n
       B(i, :) = B(i, :) - B(row, :) * B(i, row);
     end;
+    B
   end;
 end;

@@ -1,12 +1,7 @@
-#!/ur/bin/env python
-# -*- coding: utf-8 -*-
-# this is QR decomposition approach with using Householder reflection
-
 import time 
 
 from matrix_tool import divide_by_scalar, transpose, multiply, eye, get_column,\
-extend_householder_matrix, get_householder_reflection_matrix, \
-print_matrix, print_vector, append_column
+print_matrix, print_vector, append_column, norm, product_with_scalar, get_matrix_difference
 from check import check_roots
 
 from gauss_klassisch import forward, backward_right
@@ -15,7 +10,6 @@ from cholesky import inverse_triangle_right
 
 def solve(Q, R, b):
   y = multiply(transpose(Q), b)
-  print_matrix(R, round_elem=True)
   C = append_column(R, y)
 
   x = [backward_right(C, i) for i in xrange(len(C) - 1, -1, -1)]
@@ -27,7 +21,6 @@ def decompose(A):
   Q = eye(n)
   R = A
   householders_reflections = []
-  params_matrix_list = [R]
 
   for i in xrange(n - 1):
     col = transpose([get_column(R, i)[i:]])
@@ -41,17 +34,8 @@ def decompose(A):
     print
     Q = multiply(Q, H)
     householders_reflections.append(H)
-    params_matrix_list.append(R)
   return Q, R, householders_reflections
 
-
-# Немного теории по поводу нахождения детерминанта
-# Так как Q - ортогональная, а R - верхняя треугольная, то детерминант матрицы А - произведение детерминантов матриц Q *  R
-# соответсвенно, где det Q = (-1)^k, k - число рефлексий Хаусхолдера, det R равен произведению элементов диагонали матрицы (треугольная)
-#
-#
-# Информация, касающаяся поиска обратной матрицы
-# inv(A) = inv(R) * inv(Q) = inv(R) * Q' (транспонированая)
 
 def determinant(k, R):
   detR = 1
@@ -77,6 +61,31 @@ def check_feasibility(A):
       print('!!!BUSTED!!!')
       return False
   return True
+
+
+def get_householder_reflection_vector(vector):
+  res = vector[0][:]
+  res[0] = res[0] + norm(res) if (res[0] > 0) else res[0] - norm(res)
+  return [res]
+
+
+def get_householder_reflection_matrix(column):
+  a = transpose(column)
+  param = 2.0 / (norm(get_householder_reflection_vector(a)[0])**2)
+  u = [get_householder_reflection_vector(a)[0]]
+  w = product_with_scalar(multiply(transpose(u), u), param)
+  H = get_matrix_difference(eye(len(column)), w)
+  return H
+
+
+def extend_householder_matrix(matrix):
+  n = len(matrix)
+  first_row = [0 for _ in xrange(n + 1)]
+  first_row[0] = 1
+  for i in matrix:
+    i.insert(0, 0)
+  matrix.insert(0, first_row)
+  return matrix
 
 
 def main():
