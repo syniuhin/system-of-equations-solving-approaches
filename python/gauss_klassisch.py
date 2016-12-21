@@ -75,7 +75,7 @@ def triangalize(A0):
     for i in xrange(row + 1, n):
       ai = A[i][row]
       for j in xrange(row, m):
-        A[i][j] -= ai * A[row][j] / a0
+        A[i][j] -= ai * A[row][j] * 1. / a0
   return A
 
 

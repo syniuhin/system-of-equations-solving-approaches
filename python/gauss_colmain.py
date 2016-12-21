@@ -6,16 +6,17 @@ import gauss_klassisch as gk
 
 
 def solve(A, b):
+  p = 0
   S = append_column(A, b)
   for i in xrange(len(S)):
     print("Choosing main for iteration #{}".format(i))
-    choose_main(S, i)
+    p += choose_main(S, i)
     gk.forward(S, i)
   roots = []
   for i in xrange(len(S) - 1, -1, -1):
     roots.append(gk.backward_right(S, i))
   roots.reverse()
-  return roots
+  return roots, p
 
 
 def swap_rows(A, lhs, rhs):
@@ -32,19 +33,29 @@ def choose_main(A, row):
   if max_row != row:
     print("Swapping {} and {}".format(row, max_row))
     swap_rows(A, row, max_row)
-  else:
-    print("No swap, good to go!")
+    return 1
+  return 0
+
+
+def determinant(A, p):
+  tr = gk.triangalize(A)
+  print("Triangalized matrix:")
+  print_matrix(tr)
+  det = 1.
+  for i in xrange(len(tr)):
+    det *= tr[i][i]
+  return det * (-1)**p
 
 
 def main():
   from constants import A2_21 as A, b2_21 as b
   start_time = time.time()
-  x = solve(A, b)
+  x, p = solve(A, b)
   solve_time = time.time()
   print("Roots:")
   print_vector(x)
   check_roots(A, x, b)
-  det = gk.determinant(A)
+  det = determinant(A, p)
   det_time = time.time()
   print
   print("Determinant: {}".format(det))

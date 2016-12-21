@@ -30,14 +30,16 @@ function swap_rows(A, l, r)
   A(r, :) = tmp;
 end;
 
-function B = forward_colmain(A)
+function [B, p] = forward_colmain(A)
   n = size(A, 1);
   B = A;
+  p = 0;
   for row = 1:n
     [_, mrow] = max(B(row:n, row));
     mrow = mrow + row - 1
     if mrow ~= row
       disp(sprintf('Swapping %d and %d\n', row, mrow));
+      p = p + 1;
       B([row, mrow], :) = B([mrow, row], :);
     end;
     B(row, :) = B(row, :) ./ B(row, row);
@@ -51,8 +53,11 @@ end;
 
 tic
 S = [A b]
-S = forward_colmain(S);
+[S, p] = forward_colmain(S);
 [B, x] = backward_right(S);
 B
 x
 toc
+
+T = triangalize(A)
+det = determinant(T) * (-1)^p
